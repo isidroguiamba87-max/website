@@ -1,10 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useLang } from "@/lib/i18n";
+import { useEffect, useMemo, useRef, useState, KeyboardEvent } from "react";
+import { useLang, Bi } from "@/lib/i18n";
 import type { GalleryItem, GalleryStyle } from "@/lib/data";
 import { computeJustifiedRows } from "@/lib/justify";
 import Lightbox from "./Lightbox";
+
+function tileLabel(t: (bi: Bi) => string, item: GalleryItem) {
+  const caption = t(item.caption);
+  if (caption) return caption;
+  return item.mediaType === "video"
+    ? t({ pt: "Ver vídeo", en: "View video" })
+    : t({ pt: "Ver foto", en: "View photo" });
+}
+
+function onActivateKey(e: KeyboardEvent, fn: () => void) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    fn();
+  }
+}
 
 function Thumb({ item }: { item: GalleryItem }) {
   const { t } = useLang();
@@ -27,10 +42,16 @@ function GridLayout({
   items: GalleryItem[];
   onOpen: (i: number) => void;
 }) {
+  const { t } = useLang();
   return (
     <div className="gallery-grid-layout">
       {items.map((item, i) => (
-        <button key={item.id} className="gallery-tile" onClick={() => onOpen(i)}>
+        <button
+          key={item.id}
+          className="gallery-tile"
+          onClick={() => onOpen(i)}
+          aria-label={tileLabel(t, item)}
+        >
           <Thumb item={item} />
         </button>
       ))}
@@ -45,6 +66,7 @@ function MasonryLayout({
   items: GalleryItem[];
   onOpen: (i: number) => void;
 }) {
+  const { t } = useLang();
   return (
     <div className="gallery-masonry-layout">
       {items.map((item, i) => (
@@ -52,6 +74,7 @@ function MasonryLayout({
           key={item.id}
           className="gallery-masonry-tile"
           onClick={() => onOpen(i)}
+          aria-label={tileLabel(t, item)}
         >
           <Thumb item={item} />
         </button>
@@ -86,6 +109,7 @@ function JustifiedLayout({
     [items, width]
   );
 
+  const { t } = useLang();
   let flatIndex = 0;
 
   return (
@@ -100,6 +124,7 @@ function JustifiedLayout({
                 className="gallery-justified-tile"
                 style={{ width: box.width, height: box.height }}
                 onClick={() => onOpen(i)}
+                aria-label={tileLabel(t, box.item)}
               >
                 <Thumb item={box.item} />
               </button>
@@ -118,6 +143,7 @@ function CarouselLayout({
   items: GalleryItem[];
   onOpen: (i: number) => void;
 }) {
+  const { t } = useLang();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (delta: number) => {
@@ -129,7 +155,7 @@ function CarouselLayout({
       <button
         className="gallery-carousel-arrow prev"
         onClick={() => scrollBy(-320)}
-        aria-label="Anterior"
+        aria-label={t({ pt: "Anterior", en: "Previous" })}
       >
         ‹
       </button>
@@ -139,6 +165,7 @@ function CarouselLayout({
             key={item.id}
             className="gallery-carousel-tile"
             onClick={() => onOpen(i)}
+            aria-label={tileLabel(t, item)}
           >
             <Thumb item={item} />
           </button>
@@ -147,7 +174,7 @@ function CarouselLayout({
       <button
         className="gallery-carousel-arrow next"
         onClick={() => scrollBy(320)}
-        aria-label="Seguinte"
+        aria-label={t({ pt: "Seguinte", en: "Next" })}
       >
         ›
       </button>
@@ -167,10 +194,18 @@ function SlideshowLayout({
   const { t } = useLang();
   const [current, setCurrent] = useState(0);
   const item = items[current];
+  const openLabel = t({ pt: "Ampliar imagem", en: "Enlarge image" });
 
   return (
     <div className={`gallery-slideshow-layout ${fullscreen ? "fullscreen" : ""}`}>
-      <div className="gallery-slideshow-main" onClick={() => onOpen(current)}>
+      <div
+        className="gallery-slideshow-main"
+        onClick={() => onOpen(current)}
+        onKeyDown={(e) => onActivateKey(e, () => onOpen(current))}
+        role="button"
+        tabIndex={0}
+        aria-label={openLabel}
+      >
         {item.mediaType === "image" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={item.url} alt={t(item.caption)} />
@@ -185,6 +220,7 @@ function SlideshowLayout({
                 e.stopPropagation();
                 setCurrent((current - 1 + items.length) % items.length);
               }}
+              aria-label={t({ pt: "Anterior", en: "Previous" })}
             >
               ‹
             </button>
@@ -194,6 +230,7 @@ function SlideshowLayout({
                 e.stopPropagation();
                 setCurrent((current + 1) % items.length);
               }}
+              aria-label={t({ pt: "Seguinte", en: "Next" })}
             >
               ›
             </button>
@@ -207,6 +244,8 @@ function SlideshowLayout({
               key={it.id}
               className={`gallery-slideshow-thumb ${i === current ? "active" : ""}`}
               onClick={() => setCurrent(i)}
+              aria-label={tileLabel(t, it)}
+              aria-current={i === current ? "true" : undefined}
             >
               <Thumb item={it} />
             </button>
@@ -245,6 +284,7 @@ export default function GalleryGrid({
           <button
             className={`gallery-filter-chip ${!activeTag ? "active" : ""}`}
             onClick={() => setActiveTag(null)}
+            aria-pressed={!activeTag}
           >
             {t({ pt: "Todas", en: "All" })}
           </button>
@@ -253,6 +293,7 @@ export default function GalleryGrid({
               key={tag}
               className={`gallery-filter-chip ${activeTag === tag ? "active" : ""}`}
               onClick={() => setActiveTag(tag)}
+              aria-pressed={activeTag === tag}
             >
               {tag}
             </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import { useLang } from "@/lib/i18n";
 import type { GalleryItem } from "@/lib/data";
 import Lightbox from "./Lightbox";
@@ -35,7 +35,19 @@ export default function StackSlider({ items }: { items: GalleryItem[] }) {
           <img className="event-slider-backdrop" src={activeItem.url} alt="" aria-hidden />
         )}
 
-        <div className="event-slider-main" onClick={() => setLightboxOpen(true)}>
+        <div
+          className="event-slider-main"
+          onClick={() => setLightboxOpen(true)}
+          onKeyDown={(e: KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setLightboxOpen(true);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label={t({ pt: "Ampliar imagem", en: "Enlarge image" })}
+        >
           {activeItem.mediaType === "image" ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={activeItem.url} alt={t(activeItem.caption)} />

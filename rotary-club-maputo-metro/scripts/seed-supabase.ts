@@ -90,6 +90,7 @@ async function seedLeaders() {
     name: l.name,
     role_pt: l.role.pt,
     role_en: l.role.en,
+    photo: l.photo ?? null,
     sort_order: index,
   }));
 

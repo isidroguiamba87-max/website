@@ -110,28 +110,51 @@ export const about = {
 export type AboutContent = typeof about;
 export type AboutValue = AboutContent["values"][number];
 
-// ---------- Direção 2026–2027 (confirmada; fotos PENDENTES) ----------
+// ---------- Direção 2026–2027 ----------
 
-export type Leader = { name: string; role: Bi };
+export type Leader = { name: string; role: Bi; photo?: string };
 
 export const leaders: Leader[] = [
-  { name: "Ken McGhee", role: { pt: "Presidente", en: "President" } },
-  { name: "Sisa Sibanda", role: { pt: "Secretária", en: "Secretary" } },
+  {
+    name: "Ken McGhee",
+    role: { pt: "Presidente", en: "President" },
+    photo: "/images/leaders/ken-mcghee.png",
+  },
+  {
+    name: "Sisa Sibanda",
+    role: { pt: "Secretária", en: "Secretary" },
+    photo: "/images/leaders/sisa-sibanda.png",
+  },
   {
     name: "Eleutéria Latifat Laguda",
     role: { pt: "Imagem Pública", en: "Public Image" },
+    photo: "/images/leaders/eleuteria-laguda.png",
   },
-  { name: "Yara Manhiça", role: { pt: "Fundação", en: "Foundation" } },
-  { name: "Roque Sebastião", role: { pt: "Tesoureiro", en: "Treasurer" } },
+  {
+    name: "Yara Manhiça",
+    role: { pt: "Fundação", en: "Foundation" },
+    photo: "/images/leaders/yara-manhica.png",
+  },
+  {
+    name: "Roque Sebastião",
+    role: { pt: "Tesoureiro", en: "Treasurer" },
+    photo: "/images/leaders/roque-sebastiao.png",
+  },
   {
     name: "Vitalis Che Musong",
     role: { pt: "Serviços à Juventude", en: "Youth Service Chair" },
+    photo: "/images/leaders/vitalis-musong.png",
   },
   {
     name: "Eddy Chivanga",
     role: { pt: "Quadro Associativo", en: "Membership Chair" },
+    photo: "/images/leaders/eddy-chivanga.png",
   },
-  { name: "Subho Roy", role: { pt: "Projetos", en: "Projects Chair" } },
+  {
+    name: "Subho Roy",
+    role: { pt: "Projetos", en: "Projects Chair" },
+    photo: "/images/leaders/subho-roy.png",
+  },
 ];
 
 // ---------- Projetos ----------
@@ -180,6 +203,7 @@ export const projects: Project[] = [
       "/images/events/wash-khongolote/05.jpg",
       "/images/events/wash-khongolote/06.jpg",
     ],
+    videoUrl: "/images/events/wash-khongolote/video-01.mp4",
     featured: true,
   },
   // PENDENTE: o clube indicou que enviará fichas de outros projetos.
@@ -197,6 +221,7 @@ export type ClubEvent = {
   status: "upcoming" | "past";
   gallery?: string[];
   videoUrl?: string;
+  mapQuery?: string; // local do evento para o Google Maps
 };
 
 export const events: ClubEvent[] = [
@@ -214,11 +239,17 @@ export const events: ClubEvent[] = [
       en: "Dom Orione Maputo Centre — 10:00 AM to 1:00 PM",
     },
     status: "past",
+    mapQuery: "Dom Orione, Avenida de Moçambique, Zimpeto, Maputo",
     gallery: [
-      "/images/events/doacao-alimentos/01.jpg",
       "/images/events/doacao-alimentos/02.jpg",
       "/images/events/doacao-alimentos/03.jpg",
       "/images/events/doacao-alimentos/04.jpg",
+      "/images/events/doacao-alimentos/05.jpg",
+      "/images/events/doacao-alimentos/06.jpg",
+      "/images/events/doacao-alimentos/07.jpg",
+      "/images/events/doacao-alimentos/08.jpg",
+      "/images/events/doacao-alimentos/09.jpg",
+      "/images/events/doacao-alimentos/10.jpg",
     ],
   },
   {
@@ -235,11 +266,17 @@ export const events: ClubEvent[] = [
       en: "Dom Orione, Avenida de Moçambique, Zimpeto, Maputo — 10:00 AM. Painting, clown entertainment, cultural dances, children's artwork exhibition and charity auction.",
     },
     status: "past",
+    mapQuery: "Dom Orione, Avenida de Moçambique, Zimpeto, Maputo",
     gallery: [
+      "/images/events/dia-da-crianca/0.jpg",
+      "/images/events/dia-da-crianca/01.jpg",
       "/images/events/dia-da-crianca/02.jpg",
       "/images/events/dia-da-crianca/03.jpg",
       "/images/events/dia-da-crianca/04.jpg",
       "/images/events/dia-da-crianca/05.jpg",
+      "/images/events/dia-da-crianca/06.jpg",
+      "/images/events/dia-da-crianca/07.jpg",
+      "/images/events/dia-da-crianca/08.jpg",
     ],
   },
   {
@@ -256,11 +293,25 @@ export const events: ClubEvent[] = [
       en: "Aga Khan Academy Maputo, Av. do Zimbabwe No. 212, Matola “A” — 3:00 PM. Part of the auction's earnings supported the Boane Project: a library for the Vunguine Primary School.",
     },
     status: "past",
+    mapQuery: "Aga Khan Academy, Av. do Zimbabwe 212, Matola, Mozambique",
     gallery: [
+      "/images/events/seeds-of-change/01.jpg",
       "/images/events/seeds-of-change/02.jpg",
+      "/images/events/seeds-of-change/03.jpg",
+      "/images/events/seeds-of-change/04.jpg",
+      "/images/events/seeds-of-change/05.jpg",
+      "/images/events/seeds-of-change/06.jpg",
       "/images/events/seeds-of-change/07.jpg",
+      "/images/events/seeds-of-change/08.jpg",
       "/images/events/seeds-of-change/09.jpg",
+      "/images/events/seeds-of-change/10.jpg",
+      "/images/events/seeds-of-change/11.jpg",
       "/images/events/seeds-of-change/12.jpg",
+      "/images/events/seeds-of-change/13.jpg",
+      "/images/events/seeds-of-change/14.jpg",
+      "/images/events/seeds-of-change/15.jpg",
+      "/images/events/seeds-of-change/16.jpg",
+      "/images/events/seeds-of-change/17.jpg",
     ],
   },
   {
@@ -277,11 +328,14 @@ export const events: ClubEvent[] = [
       en: "Centro de Reabilitação da Malhangalene, Av. Milagre Mabote No. 1102 — 9:00 AM. Host: AMMD — Mozambican Association of Women with Disabilities.",
     },
     status: "past",
+    mapQuery: "Centro de Reabilitação da Malhangalene, Av. Milagre Mabote 1102, Maputo",
     gallery: [
       "/images/events/doacao-ajudas-tecnicas/01.jpg",
       "/images/events/doacao-ajudas-tecnicas/02.jpg",
+      "/images/events/doacao-ajudas-tecnicas/03.jpg",
       "/images/events/doacao-ajudas-tecnicas/04.jpg",
       "/images/events/doacao-ajudas-tecnicas/05.jpg",
+      "/images/events/doacao-ajudas-tecnicas/06.jpg",
     ],
   },
   {
@@ -298,11 +352,18 @@ export const events: ClubEvent[] = [
       en: "Clínica Universitária da UEM, Maputo — 8:00 AM to 3:00 PM. In partnership with Rotaract Clube da Polana (D9400), the National Blood Service and other partners.",
     },
     status: "past",
+    mapQuery: "Clínica Universitária UEM, Maputo",
     gallery: [
+      "/images/events/doacao-sangue/01.jpg",
+      "/images/events/doacao-sangue/02.jpg",
       "/images/events/doacao-sangue/03.jpg",
+      "/images/events/doacao-sangue/04.jpg",
       "/images/events/doacao-sangue/05.jpg",
+      "/images/events/doacao-sangue/06.jpg",
+      "/images/events/doacao-sangue/07.jpg",
       "/images/events/doacao-sangue/08.jpg",
       "/images/events/doacao-sangue/09.jpg",
+      "/images/events/doacao-sangue/10.jpeg",
     ],
   },
   {
@@ -319,11 +380,13 @@ export const events: ClubEvent[] = [
       en: "Maputo — all-day activity. The club's participation was featured in national TV coverage.",
     },
     status: "past",
+    mapQuery: "Maputo, Mozambique",
     gallery: [
       "/images/events/end-polio-now/01.jpg",
       "/images/events/end-polio-now/02.jpg",
       "/images/events/end-polio-now/03.jpg",
     ],
+    videoUrl: "/images/events/end-polio-now/video-01.mp4",
   },
   // PENDENTE: eventos futuros — quando o clube indicar o próximo evento,
   // adicionar aqui com status "upcoming" (aparece no filtro "Próximos" e na Home).
@@ -339,10 +402,12 @@ export const clubContacts = {
     en: "Every Tuesday — online meeting and in-person meetings at Southern Sun Stay Easy Hotel, Baía Mall, Maputo.",
   },
   social: {
-    facebook: "#", // PENDENTE: link direto — página "Rotary club of Maputo Metro - RCMM"
+    facebook: "https://www.facebook.com/rcmaputometro/", // página "Rotary Club of Maputo Metro - RCMM"
     linkedin: "#", // PENDENTE: link direto — página "Rotary Club Maputo Metro"
     instagram: "https://www.instagram.com/rc_maputometro/",
   },
+  mapLink:
+    "https://www.google.com/maps/search/?api=1&query=StayEasy+Maputo,+Av.+da+Marginal,+Maputo",
 };
 
 export type ClubContactsData = typeof clubContacts;

@@ -65,6 +65,9 @@ export default function ProjectsView({ projects }: { projects: Project[] }) {
           ]}
         />
         <Reveal>
+          <h2 className="sr-only">
+            {t({ pt: "Lista de projetos", en: "Project list" })}
+          </h2>
           <div className="card-grid four">
             {visible.map((p) => (
               <ProjectCard key={p.id} project={p} />

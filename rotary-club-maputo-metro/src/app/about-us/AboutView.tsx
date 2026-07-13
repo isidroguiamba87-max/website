@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
 import { Reveal } from "@/components/Motion";
+import PrinciplesFlower from "@/components/PrinciplesFlower";
 import type { Leader } from "@/lib/data";
 import type { SiteContent } from "@/lib/supabase/queries";
 
@@ -100,14 +101,28 @@ export default function AboutView({
               </p>
             </div>
           </div>
-          <div className="trust-row values-grid">
-            {about.values.map((v, i) => (
-              <div className="trust-card" key={i}>
-                <h4>{t(v.title)}</h4>
-                <p>{t(v.text)}</p>
-              </div>
-            ))}
+        </Reveal>
+      </div>
+
+      {/* ---------- 5 Princípios Orientadores do Rotary ---------- */}
+      <div className="section">
+        <div className="section-head">
+          <div>
+            <div className="eyebrow">Rotary International</div>
+            <h2 style={{ fontSize: 22 }}>
+              {t({
+                pt: "Os 5 Princípios Orientadores",
+                en: "The 5 Guiding Principles",
+              })}
+            </h2>
           </div>
+        </div>
+        <Reveal>
+          <PrinciplesFlower
+            centerTitle={club.name}
+            centerSubtitle={t(club.district)}
+            values={about.values}
+          />
         </Reveal>
       </div>
 
@@ -125,7 +140,6 @@ export default function AboutView({
         </div>
         <Reveal>
           <div className="leader-grid">
-            {/* Fotos oficiais individuais PENDENTES — a Eleutéria vai enviar */}
             {leaders.map((l, i) => (
               <div
                 className="leader-card"
@@ -138,15 +152,25 @@ export default function AboutView({
                   } as React.CSSProperties
                 }
               >
-                <div className="ph">
-                  {l.name
-                    .split(" ")
-                    .filter((_, i, a) => i === 0 || i === a.length - 1)
-                    .map((w) => w[0])
-                    .join("")}
-                </div>
+                {l.photo ? (
+                  <Image
+                    className="leader-photo"
+                    src={l.photo}
+                    alt={l.name}
+                    fill
+                    sizes="150px"
+                  />
+                ) : (
+                  <div className="ph">
+                    {l.name
+                      .split(" ")
+                      .filter((_, i, a) => i === 0 || i === a.length - 1)
+                      .map((w) => w[0])
+                      .join("")}
+                  </div>
+                )}
                 <div className="leader-card-info">
-                  <h4>{l.name}</h4>
+                  <h3>{l.name}</h3>
                   <p>{t(l.role)}</p>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useLang } from "@/lib/i18n";
 import { Reveal } from "@/components/Motion";
 import { useMessageModal } from "@/components/MessageModal";
+import MeetingMap from "@/components/MeetingMap";
 import type { ClubContactsData } from "@/lib/data";
 
 export default function ContactView({
@@ -21,6 +22,9 @@ export default function ContactView({
           {t({ pt: "Fale com o clube", en: "Talk to the club" })}
         </h1>
         <Reveal>
+          <h2 className="sr-only">
+            {t({ pt: "Informação de contacto", en: "Contact information" })}
+          </h2>
           <div className="contact-grid">
             <div>
               <div className="contact-item">
@@ -31,7 +35,7 @@ export default function ContactView({
                   </svg>
                 </div>
                 <div>
-                  <h4>Email</h4>
+                  <h3>Email</h3>
                   <p>
                     {clubContacts.email ? (
                       <a href={`mailto:${clubContacts.email}`}>
@@ -51,7 +55,7 @@ export default function ContactView({
                   </svg>
                 </div>
                 <div>
-                  <h4>{t({ pt: "Telefone", en: "Phone" })}</h4>
+                  <h3>{t({ pt: "Telefone", en: "Phone" })}</h3>
                   <p>
                     {clubContacts.phone ||
                       t({ pt: "Em breve", en: "Coming soon" })}
@@ -67,7 +71,7 @@ export default function ContactView({
                   </svg>
                 </div>
                 <div>
-                  <h4>{t({ pt: "Reuniões", en: "Meetings" })}</h4>
+                  <h3>{t({ pt: "Reuniões", en: "Meetings" })}</h3>
                   <p>{t(clubContacts.meetings)}</p>
                 </div>
               </div>
@@ -81,7 +85,7 @@ export default function ContactView({
                   </svg>
                 </div>
                 <div>
-                  <h4>{t({ pt: "Siga-nos", en: "Follow us" })}</h4>
+                  <h3>{t({ pt: "Siga-nos", en: "Follow us" })}</h3>
                   <div className="social-row">
                     <a href={clubContacts.social.facebook} aria-label="Facebook">
                       <svg viewBox="0 0 24 24" fill="currentColor">
@@ -114,29 +118,7 @@ export default function ContactView({
               </button>
             </div>
 
-            {/*
-              Mapa — quando o local das reuniões for confirmado (Fase 6),
-              substituir este bloco por um iframe do Google Maps:
-              <iframe src="https://www.google.com/maps/embed?pb=..." ... />
-            */}
-            <div
-              className="map-frame"
-              style={{
-                background:
-                  "repeating-linear-gradient(135deg,#EDEBE7,#EDEBE7 10px,#E4E1DC 10px,#E4E1DC 20px)",
-                border: "1px dashed var(--smoke)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--pewter)",
-                fontSize: "11.5px",
-              }}
-            >
-              {t({
-                pt: "[Mapa — localização das reuniões]",
-                en: "[Map — club meeting location]",
-              })}
-            </div>
+            <MeetingMap />
           </div>
         </Reveal>
       </div>

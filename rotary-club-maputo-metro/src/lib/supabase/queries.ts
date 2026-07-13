@@ -1,4 +1,5 @@
 import { createClient } from "./server";
+import { events as staticEvents, clubContacts as staticClubContacts } from "@/lib/data";
 import type {
   Project,
   ClubEvent,
@@ -11,6 +12,12 @@ import type {
   GallerySettingsData,
   NewsArticle,
 } from "@/lib/data";
+
+// local do evento para o Google Maps — ainda não é um campo editável no
+// painel, por isso mantém-se ligado por id à ficha estática em data.ts.
+const mapQueryByEventId = new Map(
+  staticEvents.map((e) => [e.id, e.mapQuery])
+);
 
 const SIGNED_URL_TTL = 3600;
 
@@ -90,6 +97,7 @@ export async function getEvents(): Promise<ClubEvent[]> {
       status: row.event_date >= today ? "upcoming" : "past",
       gallery: row.gallery ?? undefined,
       videoUrl: row.video_url ?? undefined,
+      mapQuery: mapQueryByEventId.get(row.id),
     };
   });
 }
@@ -106,6 +114,7 @@ export async function getLeaders(): Promise<Leader[]> {
   return (data ?? []).map((row) => ({
     name: row.name,
     role: { pt: row.role_pt, en: row.role_en },
+    photo: row.photo ?? undefined,
   }));
 }
 
@@ -128,6 +137,8 @@ export async function getClubContacts(): Promise<ClubContactsData> {
       linkedin: data.linkedin,
       instagram: data.instagram,
     },
+    // local das reuniões fixo — ainda não é um campo editável no painel.
+    mapLink: staticClubContacts.mapLink,
   };
 }
 

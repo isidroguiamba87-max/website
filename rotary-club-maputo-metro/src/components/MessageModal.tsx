@@ -14,8 +14,8 @@ import { useLang } from "@/lib/i18n";
  * Modal "Enviar Mensagem" — fiel ao protótipo: animação de entrada,
  * fecho por Escape / clique no fundo, e estado de sucesso.
  *
- * FASE 4 (Resend): substituir o corpo de handleSubmit por uma chamada a
- * /api/message que envia o email via Resend. Os campos já estão prontos.
+ * O envio grava a mensagem na tabela `submissions` (via /api/message);
+ * o clube responde a partir do painel de administração.
  */
 
 type ModalContextValue = { openMessageModal: () => void };
@@ -31,6 +31,8 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
   const { t } = useLang();
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
 
   const openMessageModal = () => {
     setOpen(true);
@@ -40,7 +42,10 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
   const close = () => {
     setOpen(false);
     document.body.style.overflow = "";
-    setTimeout(() => setSent(false), 250);
+    setTimeout(() => {
+      setSent(false);
+      setError(false);
+    }, 250);
   };
 
   useEffect(() => {
@@ -52,11 +57,30 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO Fase 4: enviar via Resend (POST /api/message)
-    setSent(true);
-    e.currentTarget.reset();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setSending(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+        }),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setSent(true);
+      form.reset();
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -89,11 +113,12 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
               </p>
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label>
+                  <label htmlFor="mm-name">
                     <span>{t({ pt: "O seu nome", en: "Your name" })}</span>{" "}
                     <span className="req">*</span>
                   </label>
                   <input
+                    id="mm-name"
                     type="text"
                     name="name"
                     placeholder={t({
@@ -104,11 +129,12 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label>
+                  <label htmlFor="mm-email">
                     <span>{t({ pt: "O seu email", en: "Your email" })}</span>{" "}
                     <span className="req">*</span>
                   </label>
                   <input
+                    id="mm-email"
                     type="email"
                     name="email"
                     placeholder={t({
@@ -119,11 +145,12 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label>
+                  <label htmlFor="mm-message">
                     <span>{t({ pt: "Mensagem", en: "Message" })}</span>{" "}
                     <span className="req">*</span>
                   </label>
                   <textarea
+                    id="mm-message"
                     rows={4}
                     name="message"
                     placeholder={t({
@@ -133,9 +160,19 @@ export function MessageModalProvider({ children }: { children: ReactNode }) {
                     required
                   />
                 </div>
+                {error && (
+                  <p className="form-error">
+                    {t({
+                      pt: "Não foi possível enviar a mensagem. Tente novamente.",
+                      en: "Couldn't send the message. Please try again.",
+                    })}
+                  </p>
+                )}
                 <div className="submit-row">
-                  <button type="submit" className="btn btn-primary">
-                    {t({ pt: "Enviar Mensagem", en: "Send Message" })}
+                  <button type="submit" className="btn btn-primary" disabled={sending}>
+                    {sending
+                      ? t({ pt: "A enviar…", en: "Sending…" })
+                      : t({ pt: "Enviar Mensagem", en: "Send Message" })}
                   </button>
                 </div>
               </form>

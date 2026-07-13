@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
 import { Reveal } from "@/components/Motion";
@@ -25,16 +26,20 @@ export default function NewsListView({ articles }: { articles: NewsArticle[] }) 
 
       <div className="section" style={{ paddingTop: 0 }}>
         <Reveal>
+          <h2 className="sr-only">
+            {t({ pt: "Lista de notícias", en: "News list" })}
+          </h2>
           <div className="card-grid four">
             {articles.map((a) => (
               <Link key={a.id} href={`/news/${a.id}`} className="proj-card">
                 <div className="photo-frame">
                   {a.coverImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={a.coverImage.url}
                       alt={t(a.title)}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      fill
+                      sizes="(max-width: 900px) 50vw, 25vw"
+                      style={{ objectFit: "cover" }}
                     />
                   ) : (
                     <div
@@ -48,7 +53,7 @@ export default function NewsListView({ articles }: { articles: NewsArticle[] }) 
                 </div>
                 <div className="body">
                   <span className="tagchip">{a.publishedAt}</span>
-                  <h4>{t(a.title)}</h4>
+                  <h3>{t(a.title)}</h3>
                   <p>{t(a.excerpt)}</p>
                 </div>
               </Link>

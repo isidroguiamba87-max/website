@@ -9,9 +9,8 @@ import { TrustCard } from "@/components/Cards";
 /**
  * Página Envolver-se — formulário de interesse (Submission).
  *
- * FASE 4 (Resend): substituir o corpo de handleSubmit por uma chamada a
- * /api/get-involved, que envia o email ao clube via Resend e/ou grava a
- * submissão no Supabase (tabela Submission, Fase 3).
+ * O envio grava o pedido na tabela `submissions` (via /api/get-involved);
+ * o clube responde a partir do painel de administração.
  */
 
 const participationOptions = [
@@ -37,11 +36,39 @@ const contributionOptions = [
 export default function GetInvolvedPage() {
   const { lang, t } = useLang();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO Fase 4: enviar via Resend / gravar no Supabase
-    setSent(true);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setSending(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/get-involved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          origin: data.get("origin"),
+          residence: data.get("residence"),
+          address: data.get("address"),
+          profession: data.get("profession"),
+          details: data.get("details"),
+          consent: data.get("consent") === "on",
+          participation: data.getAll("participation"),
+          contribution: data.getAll("contribution"),
+        }),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setSent(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
   };
 
   // No hero desta página o protótipo mostra as duas línguas em simultâneo,
@@ -73,6 +100,9 @@ export default function GetInvolvedPage() {
 
       {/* ---------- Trust cards ---------- */}
       <Reveal>
+        <h2 className="sr-only">
+          {t({ pt: "O que oferecemos", en: "What we offer" })}
+        </h2>
         <div className="gi-trust-row">
           <TrustCard
             variant="gi"
@@ -106,11 +136,12 @@ export default function GetInvolvedPage() {
         {!sent ? (
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>
+              <label htmlFor="gi-name">
                 <span>{t({ pt: "Nome completo", en: "Full name" })}</span>{" "}
                 <span className="req">*</span>
               </label>
               <input
+                id="gi-name"
                 type="text"
                 name="name"
                 placeholder={t({ pt: "ex: Ana Machava", en: "e.g. Ana Machava" })}
@@ -118,11 +149,12 @@ export default function GetInvolvedPage() {
               />
             </div>
             <div className="form-group">
-              <label>
+              <label htmlFor="gi-email">
                 <span>{t({ pt: "Endereço de email", en: "Email address" })}</span>{" "}
                 <span className="req">*</span>
               </label>
               <input
+                id="gi-email"
                 type="email"
                 name="email"
                 placeholder={t({
@@ -135,11 +167,11 @@ export default function GetInvolvedPage() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>
+                <label htmlFor="gi-origin">
                   <span>{t({ pt: "País de origem", en: "Country of origin" })}</span>{" "}
                   <span>{t({ pt: "(recomendado)", en: "(recommended)" })}</span>
                 </label>
-                <select name="origin" defaultValue="MZ">
+                <select id="gi-origin" name="origin" defaultValue="MZ">
                   <option value="MZ">{t({ pt: "Moçambique", en: "Mozambique" })}</option>
                   <option value="ZA">{t({ pt: "África do Sul", en: "South Africa" })}</option>
                   <option value="PT">Portugal</option>
@@ -147,13 +179,13 @@ export default function GetInvolvedPage() {
                 </select>
               </div>
               <div className="form-group">
-                <label>
+                <label htmlFor="gi-residence">
                   <span>
                     {t({ pt: "País de residência", en: "Country of residence" })}
                   </span>{" "}
                   <span className="req">*</span>
                 </label>
-                <select name="residence" defaultValue="MZ" required>
+                <select id="gi-residence" name="residence" defaultValue="MZ" required>
                   <option value="MZ">{t({ pt: "Moçambique", en: "Mozambique" })}</option>
                   <option value="ZA">{t({ pt: "África do Sul", en: "South Africa" })}</option>
                   <option value="other">{t({ pt: "Outro", en: "Other" })}</option>
@@ -163,14 +195,14 @@ export default function GetInvolvedPage() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>
+                <label htmlFor="gi-address">
                   <span>{t({ pt: "Endereço de contacto", en: "Contact address" })}</span>{" "}
                   <span>{t({ pt: "(opcional)", en: "(optional)" })}</span>
                 </label>
-                <input type="text" name="address" />
+                <input id="gi-address" type="text" name="address" />
               </div>
               <div className="form-group">
-                <label>
+                <label htmlFor="gi-profession">
                   <span>
                     {t({
                       pt: "Profissão / organização",
@@ -179,7 +211,7 @@ export default function GetInvolvedPage() {
                   </span>{" "}
                   <span>{t({ pt: "(opcional)", en: "(optional)" })}</span>
                 </label>
-                <input type="text" name="profession" />
+                <input id="gi-profession" type="text" name="profession" />
               </div>
             </div>
 
@@ -224,11 +256,12 @@ export default function GetInvolvedPage() {
             </div>
 
             <div className="form-group">
-              <label>
+              <label htmlFor="gi-details">
                 <span>{t({ pt: "Detalhes adicionais", en: "Additional details" })}</span>{" "}
                 <span>{t({ pt: "(opcional)", en: "(optional)" })}</span>
               </label>
               <textarea
+                id="gi-details"
                 rows={3}
                 name="details"
                 placeholder={t({
@@ -248,9 +281,19 @@ export default function GetInvolvedPage() {
               </span>
             </label>
 
+            {error && (
+              <p className="form-error">
+                {t({
+                  pt: "Não foi possível enviar o pedido. Tente novamente.",
+                  en: "Couldn't submit your request. Please try again.",
+                })}
+              </p>
+            )}
             <div className="submit-row">
-              <button type="submit" className="btn btn-primary">
-                {t({ pt: "Enviar Interesse", en: "Submit Interest" })}
+              <button type="submit" className="btn btn-primary" disabled={sending}>
+                {sending
+                  ? t({ pt: "A enviar…", en: "Sending…" })
+                  : t({ pt: "Enviar Interesse", en: "Submit Interest" })}
               </button>
             </div>
             <div style={{ textAlign: "center", marginTop: 14 }}>

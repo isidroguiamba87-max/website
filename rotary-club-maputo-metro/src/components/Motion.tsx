@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState, ReactNode } from "react";
 
+/** Curva de easing padrão do site (ease-out-quart-ish, sem bounce). */
+export const EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1];
+
 /**
  * Reveal — replica a animação de entrada em scroll do protótipo
  * (fade + subida, com atraso escalonado entre elementos).
@@ -65,11 +68,18 @@ export function CountUp({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           obs.unobserve(entry.target);
+          if (reducedMotion) {
+            setValue(target);
+            return;
+          }
           const duration = 1100;
           const start = performance.now();
           const tick = (now: number) => {

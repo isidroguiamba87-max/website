@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
 
@@ -9,20 +10,20 @@ export default function Footer() {
 
   return (
     <footer className="site">
+      <h2 className="sr-only">{t({ pt: "Rodapé", en: "Footer" })}</h2>
       <div className="foot-grid">
         <div>
           <div className="foot-logo">
-            <div className="logo-mark">RCM</div>
-            <div
-              className="club"
-              style={{
-                color: "#fff",
-                fontFamily: "var(--font-lora), Lora, serif",
-                fontWeight: 700,
-                fontSize: "15.5px",
-              }}
-            >
-              Rotary Club of Maputo Metro
+            <Image
+              src="/images/logo2.png"
+              alt="Rotary Club of Maputo Metro"
+              className="logo-mark-img"
+              width={227}
+              height={95}
+            />
+            <div className="foot-logo-text">
+              <div className="brand">Rotary</div>
+              <div className="club">Club Maputo Metro</div>
             </div>
           </div>
           <p style={{ fontSize: "12.5px", color: "#B9C8E0", lineHeight: 1.6 }}>
@@ -33,14 +34,14 @@ export default function Footer() {
           </p>
         </div>
         <div>
-          <h4>{t({ pt: "Explorar", en: "Explore" })}</h4>
+          <h3>{t({ pt: "Explorar", en: "Explore" })}</h3>
           <Link href="/about-us">{t({ pt: "Sobre Nós", en: "About Us" })}</Link>
           <Link href="/projects">{t({ pt: "Projetos", en: "Projects" })}</Link>
           <Link href="/events">{t({ pt: "Eventos", en: "Events" })}</Link>
           <Link href="/news">{t({ pt: "Notícias", en: "News" })}</Link>
         </div>
         <div>
-          <h4>{t({ pt: "Participar", en: "Take Action" })}</h4>
+          <h3>{t({ pt: "Participar", en: "Take Action" })}</h3>
           <Link href="/get-involved">
             {t({ pt: "Envolver-se", en: "Get Involved" })}
           </Link>
@@ -54,7 +55,7 @@ export default function Footer() {
           </a>
         </div>
         <div>
-          <h4>Legal</h4>
+          <h3>Legal</h3>
           {/* Página de privacidade a criar na Fase 6, com o texto jurídico final */}
           <Link href="/privacy">
             {t({ pt: "Aviso de Privacidade", en: "Privacy Notice" })}

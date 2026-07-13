@@ -11,9 +11,16 @@ export function createClient() {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // "setAll" foi chamado a partir de um Server Component (só leitura).
+            // Sem problema aqui: o site público não tem sessão de utilizador
+            // para persistir — as rotas de API (/api/message, /api/get-involved)
+            // continuam a poder escrever cookies normalmente.
+          }
         },
       },
     }

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,12 +45,17 @@ export default function Header() {
   return (
     <header className={`site ${scrolled ? "scrolled" : ""}`}>
       <Link href="/" className="logo-lockup">
-        <div className="logo-mark">RCM</div>
+        <Image
+          src="/images/logo2.png"
+          alt="Rotary Club of Maputo Metro"
+          className="logo-mark-img"
+          width={227}
+          height={95}
+          priority
+        />
         <div className="logo-text">
-          <div className="club">Rotary Club of Maputo Metro</div>
-          <div className="tag">
-            {t({ pt: "Distrito 9400 · Pessoas de Ação", en: "District 9400 · People of Action" })}
-          </div>
+          <div className="brand">Rotary</div>
+          <div className="club">Club Maputo Metro</div>
         </div>
       </Link>
 
@@ -76,19 +82,23 @@ export default function Header() {
           <button
             className={lang === "pt" ? "active" : ""}
             onClick={() => setLang("pt")}
+            aria-pressed={lang === "pt"}
           >
             PT
           </button>
           <button
             className={lang === "en" ? "active" : ""}
             onClick={() => setLang("en")}
+            aria-pressed={lang === "en"}
           >
             EN
           </button>
         </div>
         <button
           className={`burger ${menuOpen ? "open" : ""}`}
-          aria-label="Menu"
+          aria-label={
+            menuOpen ? t({ pt: "Fechar menu", en: "Close menu" }) : t({ pt: "Abrir menu", en: "Open menu" })
+          }
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((v) => !v)}
         >
