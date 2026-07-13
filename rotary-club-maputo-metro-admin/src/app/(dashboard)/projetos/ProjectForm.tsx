@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import type { ProjectCategory, AdminProject } from "@/lib/types";
+import type { ProjectCategory, AdminProject, GalleryItem } from "@/lib/types";
+import EntityGallery from "@/components/EntityGallery";
+
+const MAX_GALLERY_PHOTOS = 10;
 
 const NEW_CATEGORY_VALUE = "__new__";
 
 const inputClass =
-  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rotary-blue";
+  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-rotary-blue";
 const labelClass = "block text-sm font-medium text-neutral-700 mb-1";
 
 function BilingualField({
@@ -55,10 +58,12 @@ export default function ProjectForm({
   action,
   categories,
   project,
+  galleryItems = [],
 }: {
   action: (formData: FormData) => void;
   categories: ProjectCategory[];
   project?: AdminProject;
+  galleryItems?: GalleryItem[];
 }) {
   const [addingCategory, setAddingCategory] = useState(false);
 
@@ -145,14 +150,20 @@ export default function ProjectForm({
 
       <div>
         <label className={labelClass}>
-          Galeria de fotos (um caminho/URL por linha)
+          Galeria de fotos ({galleryItems.length}/{MAX_GALLERY_PHOTOS})
         </label>
-        <textarea
-          name="gallery"
-          defaultValue={project?.gallery.join("\n")}
-          rows={4}
-          className={inputClass}
-        />
+        {project ? (
+          <EntityGallery
+            items={galleryItems}
+            scope={{ projectId: project.id }}
+            max={MAX_GALLERY_PHOTOS}
+          />
+        ) : (
+          <p className="text-xs text-neutral-400">
+            Guarda o projeto primeiro — depois podes enviar até {MAX_GALLERY_PHOTOS}{" "}
+            fotos aqui.
+          </p>
+        )}
       </div>
 
       <div>
@@ -180,7 +191,7 @@ export default function ProjectForm({
           type="submit"
           name="intent"
           value="draft"
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
         >
           Guardar rascunho
         </button>
@@ -188,7 +199,7 @@ export default function ProjectForm({
           type="submit"
           name="intent"
           value="publish"
-          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark"
         >
           Publicar
         </button>

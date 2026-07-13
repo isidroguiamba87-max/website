@@ -60,6 +60,19 @@ export type AdminNews = {
   sortOrder: number;
 };
 
+export type Submission = {
+  id: string;
+  source: "contact" | "get-involved";
+  name: string;
+  email: string;
+  message: string;
+  meta: Record<string, unknown> | null;
+  status: "unread" | "read" | "replied";
+  replyBody: string | null;
+  repliedAt: string | null;
+  createdAt: string;
+};
+
 export type AdminEvent = {
   id: string;
   eventDate: string;

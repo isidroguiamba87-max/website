@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import type { AdminNews } from "@/lib/types";
+import type { AdminNews, GalleryItem } from "@/lib/types";
 import RichTextEditor from "@/components/RichTextEditor";
+import EntityGallery from "@/components/EntityGallery";
 
 const inputClass =
-  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rotary-blue";
+  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-rotary-blue";
 const labelClass = "block text-sm font-medium text-neutral-700 mb-1";
 
 function BilingualField({
@@ -54,9 +54,11 @@ function BilingualField({
 export default function NewsForm({
   action,
   news,
+  galleryItems = [],
 }: {
   action: (formData: FormData) => void;
   news?: AdminNews;
+  galleryItems?: GalleryItem[];
 }) {
   const [bodyPt, setBodyPt] = useState(news?.bodyPt ?? "");
   const [bodyEn, setBodyEn] = useState(news?.bodyEn ?? "");
@@ -109,22 +111,27 @@ export default function NewsForm({
         </div>
       </div>
 
-      {news && (
-        <p className="text-sm text-neutral-500">
-          Para adicionar a foto de capa e outras fotos deste artigo, vai a{" "}
-          <Link href="/galeria" className="text-rotary-blue hover:underline">
-            Galeria
-          </Link>{" "}
-          e escolhe "Notícia: {news.titlePt}" no envio.
-        </p>
-      )}
+      <div>
+        <label className={labelClass}>Foto de capa (1 foto)</label>
+        {news ? (
+          <EntityGallery
+            items={galleryItems}
+            scope={{ newsId: news.id }}
+            max={1}
+          />
+        ) : (
+          <p className="text-xs text-neutral-400">
+            Guarda o artigo primeiro — depois podes enviar a foto de capa aqui.
+          </p>
+        )}
+      </div>
 
       <div className="flex gap-3 pt-2">
         <button
           type="submit"
           name="intent"
           value="draft"
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
         >
           Guardar rascunho
         </button>
@@ -132,7 +139,7 @@ export default function NewsForm({
           type="submit"
           name="intent"
           value="publish"
-          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark"
         >
           Publicar
         </button>

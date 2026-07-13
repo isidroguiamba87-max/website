@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { GalleryItem } from "@/lib/types";
@@ -12,6 +13,7 @@ import {
   deleteItem,
 } from "./actions";
 import CropModal from "./CropModal";
+import ConfirmModal from "@/components/ConfirmModal";
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-yellow-50 text-yellow-700",
@@ -31,6 +33,7 @@ export default function GalleryItemCard({ item }: { item: GalleryItem }) {
   const [captionEn, setCaptionEn] = useState(item.captionEn);
   const [tag, setTag] = useState(item.tag);
   const [cropOpen, setCropOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const style = {
@@ -165,20 +168,28 @@ export default function GalleryItemCard({ item }: { item: GalleryItem }) {
 
         <button
           disabled={busy}
-          onClick={() => {
-            if (window.confirm("Apagar este ficheiro? Não pode ser desfeito.")) {
-              run(() => deleteItem(item.id, item.storagePath));
-            }
-          }}
+          onClick={() => setDeleteOpen(true)}
           className="text-xs font-medium text-red-600 hover:text-red-700"
         >
           Apagar
         </button>
       </div>
 
-      {cropOpen && (
-        <CropModal item={item} onClose={() => setCropOpen(false)} />
-      )}
+      <AnimatePresence>
+        {cropOpen && (
+          <CropModal item={item} onClose={() => setCropOpen(false)} />
+        )}
+      </AnimatePresence>
+
+      <ConfirmModal
+        open={deleteOpen}
+        message="Apagar este ficheiro? Não pode ser desfeito."
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={() => {
+          setDeleteOpen(false);
+          run(() => deleteItem(item.id, item.storagePath));
+        }}
+      />
     </div>
   );
 }

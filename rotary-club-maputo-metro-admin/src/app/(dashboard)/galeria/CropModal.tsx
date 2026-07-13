@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE, DURATION } from "@/lib/motion";
 import type { GalleryItem } from "@/lib/types";
 import { cropPhoto } from "./actions";
 
@@ -17,6 +19,7 @@ export default function CropModal({
   const [zoom, setZoom] = useState(1);
   const [area, setArea] = useState<Area | null>(null);
   const [saving, setSaving] = useState(false);
+  const reduced = useReducedMotion();
 
   const onCropComplete = useCallback((_: Area, croppedAreaPixels: Area) => {
     setArea(croppedAreaPixels);
@@ -39,8 +42,20 @@ export default function CropModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-lg overflow-hidden">
+    <motion.div
+      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduced ? 0 : DURATION.base }}
+    >
+      <motion.div
+        className="bg-white rounded-lg w-full max-w-lg overflow-hidden"
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 8 }}
+        transition={{ duration: reduced ? 0 : DURATION.base, ease: EASE }}
+      >
         <div className="relative h-80 bg-neutral-900">
           <Cropper
             image={item.url}
@@ -78,7 +93,7 @@ export default function CropModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

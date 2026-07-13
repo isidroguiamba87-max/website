@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getProjects, getCategories } from "@/lib/queries";
 import { deleteProject } from "./actions";
 import DeleteButton from "@/components/DeleteButton";
+import AnimatedRows from "@/components/AnimatedRows";
 
 export default async function ProjetosPage() {
   const [projects, categories] = await Promise.all([
@@ -22,7 +23,7 @@ export default async function ProjetosPage() {
         </div>
         <Link
           href="/projetos/novo"
-          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark"
         >
           Novo Projeto
         </Link>
@@ -40,40 +41,45 @@ export default async function ProjetosPage() {
             </tr>
           </thead>
           <tbody>
-            {projects.map((p) => (
-              <tr key={p.id} className="border-t border-neutral-100">
-                <td className="px-4 py-3">{p.titlePt}</td>
-                <td className="px-4 py-3 text-neutral-600">
-                  {labelFor(p.category)}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`text-xs rounded px-2 py-0.5 ${
-                      p.published
-                        ? "bg-green-50 text-green-700"
-                        : "bg-neutral-100 text-neutral-500"
-                    }`}
-                  >
-                    {p.published ? "Publicado" : "Rascunho"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-neutral-500">
-                  {p.featured ? "Sim" : "—"}
-                </td>
-                <td className="px-4 py-3 text-right space-x-4 whitespace-nowrap">
-                  <Link
-                    href={`/projetos/${p.id}`}
-                    className="text-sm font-medium text-rotary-blue hover:underline"
-                  >
-                    Editar
-                  </Link>
-                  <DeleteButton
-                    action={deleteProject.bind(null, p.id)}
-                    confirmMessage={`Apagar o projeto "${p.titlePt}"? Esta ação não pode ser desfeita.`}
-                  />
-                </td>
-              </tr>
-            ))}
+            <AnimatedRows
+              rows={projects.map((p) => ({
+                key: p.id,
+                content: (
+                  <>
+                    <td className="px-4 py-3">{p.titlePt}</td>
+                    <td className="px-4 py-3 text-neutral-600">
+                      {labelFor(p.category)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`text-xs rounded px-2 py-0.5 ${
+                          p.published
+                            ? "bg-green-50 text-green-700"
+                            : "bg-neutral-100 text-neutral-500"
+                        }`}
+                      >
+                        {p.published ? "Publicado" : "Rascunho"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-neutral-500">
+                      {p.featured ? "Sim" : "—"}
+                    </td>
+                    <td className="px-4 py-3 text-right space-x-4 whitespace-nowrap">
+                      <Link
+                        href={`/projetos/${p.id}`}
+                        className="text-sm font-medium text-rotary-blue transition-colors hover:underline"
+                      >
+                        Editar
+                      </Link>
+                      <DeleteButton
+                        action={deleteProject.bind(null, p.id)}
+                        confirmMessage={`Apagar o projeto "${p.titlePt}"? Esta ação não pode ser desfeita.`}
+                      />
+                    </td>
+                  </>
+                ),
+              }))}
+            />
             {projects.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-neutral-400">

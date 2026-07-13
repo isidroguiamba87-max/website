@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCategories, getProject } from "@/lib/queries";
+import { getCategories, getProject, getGalleryItems } from "@/lib/queries";
 import { updateProject } from "../actions";
 import ProjectForm from "../ProjectForm";
 
@@ -8,12 +8,15 @@ export default async function EditarProjetoPage({
 }: {
   params: { id: string };
 }) {
-  const [categories, project] = await Promise.all([
+  const [categories, project, allGalleryItems] = await Promise.all([
     getCategories(),
     getProject(params.id),
+    getGalleryItems(),
   ]);
 
   if (!project) notFound();
+
+  const galleryItems = allGalleryItems.filter((i) => i.projectId === project.id);
 
   return (
     <div>
@@ -25,6 +28,7 @@ export default async function EditarProjetoPage({
           action={updateProject.bind(null, project.id)}
           categories={categories}
           project={project}
+          galleryItems={galleryItems}
         />
       </div>
     </div>

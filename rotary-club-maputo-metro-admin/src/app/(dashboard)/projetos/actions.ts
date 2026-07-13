@@ -47,10 +47,6 @@ function projectPayload(formData: FormData, category: string) {
     category,
     status: String(formData.get("status") ?? "active"),
     image: String(formData.get("image") ?? ""),
-    gallery: String(formData.get("gallery") ?? "")
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean),
     video_url: String(formData.get("video_url") ?? "").trim() || null,
     featured: formData.get("featured") === "on",
   };

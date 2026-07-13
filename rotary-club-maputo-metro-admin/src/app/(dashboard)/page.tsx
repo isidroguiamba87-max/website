@@ -1,29 +1,50 @@
-import Link from "next/link";
 import { getDashboardCounts } from "@/lib/queries";
+import DashboardCards, { type DashboardCard } from "./DashboardCards";
+import QuickActions from "./QuickActions";
 
 export default async function DashboardPage() {
   const counts = await getDashboardCounts();
 
-  const cards = [
+  const cards: DashboardCard[] = [
     {
       label: "Projetos publicados",
       value: counts.projectsPublished,
       href: "/projetos",
+      linkLabel: "Ver todos",
+      icon: "briefcase",
+      color: "blue",
     },
     {
       label: "Projetos em rascunho",
       value: counts.projectsDraft,
       href: "/projetos",
+      linkLabel: "Ver rascunhos",
+      icon: "draft",
+      color: "emerald",
     },
     {
       label: "Eventos publicados",
       value: counts.eventsPublished,
       href: "/eventos",
+      linkLabel: "Ver todos",
+      icon: "calendar-check",
+      color: "violet",
     },
     {
       label: "Eventos em rascunho",
       value: counts.eventsDraft,
       href: "/eventos",
+      linkLabel: "Ver rascunhos",
+      icon: "calendar",
+      color: "amber",
+    },
+    {
+      label: "Submissões por ler",
+      value: counts.submissionsUnread,
+      href: "/submissoes",
+      linkLabel: "Ver submissões",
+      icon: "send",
+      color: "rose",
     },
   ];
 
@@ -34,19 +55,10 @@ export default async function DashboardPage() {
         Resumo do conteúdo do site.
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        {cards.map((c) => (
-          <Link
-            key={c.label}
-            href={c.href}
-            className="rounded-lg border border-neutral-200 bg-white p-5 hover:border-rotary-blue transition-colors"
-          >
-            <div className="text-2xl font-semibold text-rotary-blue">
-              {c.value}
-            </div>
-            <div className="text-sm text-neutral-500 mt-1">{c.label}</div>
-          </Link>
-        ))}
+      <DashboardCards cards={cards} />
+
+      <div className="mt-6">
+        <QuickActions />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getNewsList } from "@/lib/queries";
 import { deleteNews } from "./actions";
 import DeleteButton from "@/components/DeleteButton";
+import AnimatedRows from "@/components/AnimatedRows";
 
 export default async function NoticiasPage() {
   const news = await getNewsList();
@@ -15,7 +16,7 @@ export default async function NoticiasPage() {
         </div>
         <Link
           href="/noticias/novo"
-          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark"
         >
           Novo Artigo
         </Link>
@@ -32,35 +33,40 @@ export default async function NoticiasPage() {
             </tr>
           </thead>
           <tbody>
-            {news.map((n) => (
-              <tr key={n.id} className="border-t border-neutral-100">
-                <td className="px-4 py-3">{n.titlePt}</td>
-                <td className="px-4 py-3 text-neutral-600">{n.publishedAt}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`text-xs rounded px-2 py-0.5 ${
-                      n.published
-                        ? "bg-green-50 text-green-700"
-                        : "bg-neutral-100 text-neutral-500"
-                    }`}
-                  >
-                    {n.published ? "Publicado" : "Rascunho"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right space-x-4 whitespace-nowrap">
-                  <Link
-                    href={`/noticias/${n.id}`}
-                    className="text-sm font-medium text-rotary-blue hover:underline"
-                  >
-                    Editar
-                  </Link>
-                  <DeleteButton
-                    action={deleteNews.bind(null, n.id)}
-                    confirmMessage={`Apagar o artigo "${n.titlePt}"? Esta ação não pode ser desfeita.`}
-                  />
-                </td>
-              </tr>
-            ))}
+            <AnimatedRows
+              rows={news.map((n) => ({
+                key: n.id,
+                content: (
+                  <>
+                    <td className="px-4 py-3">{n.titlePt}</td>
+                    <td className="px-4 py-3 text-neutral-600">{n.publishedAt}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`text-xs rounded px-2 py-0.5 ${
+                          n.published
+                            ? "bg-green-50 text-green-700"
+                            : "bg-neutral-100 text-neutral-500"
+                        }`}
+                      >
+                        {n.published ? "Publicado" : "Rascunho"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right space-x-4 whitespace-nowrap">
+                      <Link
+                        href={`/noticias/${n.id}`}
+                        className="text-sm font-medium text-rotary-blue transition-colors hover:underline"
+                      >
+                        Editar
+                      </Link>
+                      <DeleteButton
+                        action={deleteNews.bind(null, n.id)}
+                        confirmMessage={`Apagar o artigo "${n.titlePt}"? Esta ação não pode ser desfeita.`}
+                      />
+                    </td>
+                  </>
+                ),
+              }))}
+            />
             {news.length === 0 && (
               <tr>
                 <td colSpan={4} className="px-4 py-8 text-center text-neutral-400">

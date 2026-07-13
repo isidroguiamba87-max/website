@@ -99,7 +99,7 @@ export default function GallerySettingsForm({
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="w-full rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark disabled:opacity-60"
         >
           {saving ? "A guardar…" : "Guardar e publicar"}
         </button>

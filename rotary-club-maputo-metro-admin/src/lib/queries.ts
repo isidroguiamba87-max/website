@@ -6,6 +6,7 @@ import type {
   AdminNews,
   GalleryItem,
   GallerySettings,
+  Submission,
 } from "./types";
 
 const SIGNED_URL_TTL = 3600;
@@ -208,18 +209,62 @@ export async function getGallerySettings(): Promise<GallerySettings> {
 
 export async function getDashboardCounts() {
   const supabase = createClient();
-  const [projects, events] = await Promise.all([
+  const [projects, events, submissions] = await Promise.all([
     supabase.from("projects").select("published"),
     supabase.from("events").select("published"),
+    supabase.from("submissions").select("status"),
   ]);
 
   if (projects.error) throw new Error(`getDashboardCounts: ${projects.error.message}`);
   if (events.error) throw new Error(`getDashboardCounts: ${events.error.message}`);
+  // Não rebenta se a migração da tabela `submissions` ainda não tiver corrido.
+  const submissionsUnread = submissions.error
+    ? 0
+    : (submissions.data ?? []).filter((r) => r.status === "unread").length;
 
   return {
     projectsPublished: (projects.data ?? []).filter((r) => r.published).length,
     projectsDraft: (projects.data ?? []).filter((r) => !r.published).length,
     eventsPublished: (events.data ?? []).filter((r) => r.published).length,
     eventsDraft: (events.data ?? []).filter((r) => !r.published).length,
+    submissionsUnread,
   };
+}
+
+function toSubmission(row: any): Submission {
+  return {
+    id: row.id,
+    source: row.source,
+    name: row.name,
+    email: row.email,
+    message: row.message,
+    meta: row.meta,
+    status: row.status,
+    replyBody: row.reply_body,
+    repliedAt: row.replied_at,
+    createdAt: row.created_at,
+  };
+}
+
+export async function getSubmissions(): Promise<Submission[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(`getSubmissions: ${error.message}`);
+  return (data ?? []).map(toSubmission);
+}
+
+export async function getSubmission(id: string): Promise<Submission | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw new Error(`getSubmission: ${error.message}`);
+  return data ? toSubmission(data) : null;
 }

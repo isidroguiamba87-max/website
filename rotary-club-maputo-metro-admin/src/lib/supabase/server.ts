@@ -11,9 +11,14 @@ export function createClient() {
       cookies: {
         getAll: () => cookieStore.getAll(),
         setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // "setAll" foi chamado a partir de um Server Component (só leitura).
+            // Sem problema: o middleware.ts já atualiza a sessão em cada pedido.
+          }
         },
       },
     }

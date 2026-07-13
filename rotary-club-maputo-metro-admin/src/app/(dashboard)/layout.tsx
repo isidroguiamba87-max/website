@@ -1,6 +1,8 @@
-import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "./actions";
+import SidebarNav from "@/components/SidebarNav";
+import PageTransition from "@/components/PageTransition";
 
 const NAV_ACTIVE = [
   { href: "/", label: "Dashboard" },
@@ -8,9 +10,9 @@ const NAV_ACTIVE = [
   { href: "/eventos", label: "Eventos" },
   { href: "/noticias", label: "Notícias" },
   { href: "/galeria", label: "Galeria" },
+  { href: "/submissoes", label: "Submissões" },
+  { href: "/utilizadores", label: "Utilizadores" },
 ];
-
-const NAV_SOON = ["Submissões", "Utilizadores"];
 
 export default async function DashboardLayout({
   children,
@@ -21,43 +23,33 @@ export default async function DashboardLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { count: unreadCount } = await supabase
+    .from("submissions")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "unread");
 
   return (
     <div className="flex min-h-screen">
       <aside className="w-60 shrink-0 border-r border-neutral-200 bg-white flex flex-col">
-        <div className="px-5 py-5 border-b border-neutral-100">
-          <div className="text-sm font-semibold text-rotary-blue leading-tight">
-            Rotary Club
-            <br />
-            Maputo Metro
+        <div className="px-5 py-5 border-b border-neutral-100 flex items-center gap-3">
+          <Image
+            src="/images/logo2.png"
+            alt="Rotary Club of Maputo Metro"
+            width={36}
+            height={36}
+            className="shrink-0"
+          />
+          <div>
+            <div className="text-sm font-semibold text-rotary-blue leading-tight">
+              Rotary Club
+              <br />
+              Maputo Metro
+            </div>
+            <div className="text-xs text-neutral-400 mt-0.5">Administração</div>
           </div>
-          <div className="text-xs text-neutral-400 mt-0.5">Administração</div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {NAV_ACTIVE.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <div className="pt-2 mt-2 border-t border-neutral-100">
-            {NAV_SOON.map((label) => (
-              <div
-                key={label}
-                className="flex items-center justify-between rounded-md px-3 py-2 text-sm text-neutral-400"
-              >
-                <span>{label}</span>
-                <span className="text-[10px] uppercase tracking-wide bg-neutral-100 text-neutral-400 rounded px-1.5 py-0.5">
-                  Em breve
-                </span>
-              </div>
-            ))}
-          </div>
-        </nav>
+        <SidebarNav items={NAV_ACTIVE} unreadCount={unreadCount ?? 0} />
 
         <div className="px-3 py-4 border-t border-neutral-100">
           <div className="px-3 text-xs text-neutral-400 truncate mb-2">
@@ -66,7 +58,7 @@ export default async function DashboardLayout({
           <form action={logout}>
             <button
               type="submit"
-              className="w-full text-left rounded-md px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+              className="w-full text-left rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100"
             >
               Sair
             </button>
@@ -74,7 +66,9 @@ export default async function DashboardLayout({
         </div>
       </aside>
 
-      <main className="flex-1 px-8 py-8">{children}</main>
+      <main className="flex-1 px-8 py-8">
+        <PageTransition>{children}</PageTransition>
+      </main>
     </div>
   );
 }

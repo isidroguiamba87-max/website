@@ -1,9 +1,12 @@
 "use client";
 
-import type { AdminEvent } from "@/lib/types";
+import type { AdminEvent, GalleryItem } from "@/lib/types";
+import EntityGallery from "@/components/EntityGallery";
+
+const MAX_GALLERY_PHOTOS = 10;
 
 const inputClass =
-  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rotary-blue";
+  "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-rotary-blue";
 const labelClass = "block text-sm font-medium text-neutral-700 mb-1";
 
 function BilingualField({
@@ -51,9 +54,11 @@ function BilingualField({
 export default function EventForm({
   action,
   event,
+  galleryItems = [],
 }: {
   action: (formData: FormData) => void;
   event?: AdminEvent;
+  galleryItems?: GalleryItem[];
 }) {
   return (
     <form action={action} className="space-y-5 max-w-3xl">
@@ -126,14 +131,20 @@ export default function EventForm({
 
       <div>
         <label className={labelClass}>
-          Galeria de fotos (um caminho/URL por linha)
+          Galeria de fotos ({galleryItems.length}/{MAX_GALLERY_PHOTOS})
         </label>
-        <textarea
-          name="gallery"
-          defaultValue={event?.gallery.join("\n")}
-          rows={4}
-          className={inputClass}
-        />
+        {event ? (
+          <EntityGallery
+            items={galleryItems}
+            scope={{ eventId: event.id }}
+            max={MAX_GALLERY_PHOTOS}
+          />
+        ) : (
+          <p className="text-xs text-neutral-400">
+            Guarda o evento primeiro — depois podes enviar até {MAX_GALLERY_PHOTOS}{" "}
+            fotos aqui.
+          </p>
+        )}
       </div>
 
       <div>
@@ -151,7 +162,7 @@ export default function EventForm({
           type="submit"
           name="intent"
           value="draft"
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
         >
           Guardar rascunho
         </button>
@@ -159,7 +170,7 @@ export default function EventForm({
           type="submit"
           name="intent"
           value="publish"
-          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white hover:bg-rotary-blue-dark"
+          className="rounded-md bg-rotary-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rotary-blue-dark"
         >
           Publicar
         </button>
