@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isExternalImage } from "@/lib/images";
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
 import { Reveal } from "@/components/Motion";
@@ -38,6 +39,7 @@ export default function NewsListView({ articles }: { articles: NewsArticle[] }) 
                       src={a.coverImage.url}
                       alt={t(a.title)}
                       fill
+                      unoptimized={isExternalImage(a.coverImage.url)}
                       sizes="(max-width: 900px) 50vw, 25vw"
                       style={{ objectFit: "cover" }}
                     />

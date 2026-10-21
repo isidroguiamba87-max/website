@@ -55,6 +55,7 @@ export type AdminNews = {
   bodyPt: string;
   bodyEn: string;
   author: string;
+  coverImage: string;
   publishedAt: string;
   published: boolean;
   sortOrder: number;
@@ -84,6 +85,7 @@ export type AdminEvent = {
   titleEn: string;
   infoPt: string;
   infoEn: string;
+  coverImage: string;
   gallery: string[];
   videoUrl: string;
   published: boolean;

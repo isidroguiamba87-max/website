@@ -21,6 +21,7 @@ function eventPayload(formData: FormData) {
     title_en: String(formData.get("title_en") ?? ""),
     info_pt: String(formData.get("info_pt") ?? ""),
     info_en: String(formData.get("info_en") ?? ""),
+    cover_image: String(formData.get("cover_image") ?? "").trim() || null,
     video_url: String(formData.get("video_url") ?? "").trim() || null,
   };
 }

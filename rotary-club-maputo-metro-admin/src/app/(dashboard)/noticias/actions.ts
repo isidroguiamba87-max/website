@@ -14,6 +14,7 @@ function newsPayload(formData: FormData) {
     body_pt: String(formData.get("body_pt") ?? ""),
     body_en: String(formData.get("body_en") ?? ""),
     author: String(formData.get("author") ?? "").trim() || null,
+    cover_image: String(formData.get("cover_image") ?? "").trim() || null,
     published_at: String(formData.get("published_at") ?? new Date().toISOString().slice(0, 10)),
   };
 }

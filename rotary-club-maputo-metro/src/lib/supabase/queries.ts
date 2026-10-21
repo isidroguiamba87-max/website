@@ -95,6 +95,7 @@ export async function getEvents(): Promise<ClubEvent[]> {
       title: { pt: row.title_pt, en: row.title_en },
       info: { pt: row.info_pt, en: row.info_en },
       status: row.event_date >= today ? "upcoming" : "past",
+      coverImage: row.cover_image ?? undefined,
       gallery: row.gallery ?? undefined,
       videoUrl: row.video_url ?? undefined,
       mapQuery: mapQueryByEventId.get(row.id),
@@ -289,7 +290,16 @@ export async function getNewsList(): Promise<NewsArticle[]> {
       body: { pt: row.body_pt, en: row.body_en },
       author: row.author ?? "",
       publishedAt: row.published_at,
-      coverImage: cover
+      // capa definida no painel (upload ou URL) tem prioridade sobre a
+      // capa antiga vinda da Galeria
+      coverImage: row.cover_image
+        ? {
+            id: `${row.id}-cover`,
+            url: row.cover_image,
+            mediaType: "image" as const,
+            caption: { pt: row.title_pt, en: row.title_en },
+          }
+        : cover
         ? {
             id: cover.id,
             url: urlByPath.get(cover.storage_path) ?? "",

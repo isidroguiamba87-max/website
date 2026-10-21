@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { AdminNews, GalleryItem } from "@/lib/types";
 import RichTextEditor from "@/components/RichTextEditor";
 import EntityGallery from "@/components/EntityGallery";
+import CoverImageField from "@/components/CoverImageField";
 
 const inputClass =
   "w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-rotary-blue";
@@ -111,20 +112,24 @@ export default function NewsForm({
         </div>
       </div>
 
-      <div>
-        <label className={labelClass}>Foto de capa (1 foto)</label>
-        {news ? (
+      <CoverImageField
+        name="cover_image"
+        defaultValue={news?.coverImage}
+        folder="news"
+      />
+
+      {/* Capas antigas, enviadas pela Galeria antes do campo acima existir.
+          O site só as usa quando o artigo não tem foto de capa definida acima. */}
+      {news && galleryItems.length > 0 && (
+        <div>
+          <label className={labelClass}>Foto de capa antiga (da Galeria)</label>
           <EntityGallery
             items={galleryItems}
             scope={{ newsId: news.id }}
             max={1}
           />
-        ) : (
-          <p className="text-xs text-neutral-400">
-            Guarda o artigo primeiro — depois podes enviar a foto de capa aqui.
-          </p>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="flex gap-3 pt-2">
         <button

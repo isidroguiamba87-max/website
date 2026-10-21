@@ -2,6 +2,7 @@
 
 import type { AdminEvent, GalleryItem } from "@/lib/types";
 import EntityGallery from "@/components/EntityGallery";
+import CoverImageField from "@/components/CoverImageField";
 
 const MAX_GALLERY_PHOTOS = 10;
 
@@ -127,6 +128,13 @@ export default function EventForm({
         defaultPt={event?.infoPt}
         defaultEn={event?.infoEn}
         textarea
+      />
+
+      <CoverImageField
+        name="cover_image"
+        label="Foto de capa (opcional)"
+        defaultValue={event?.coverImage}
+        folder="events"
       />
 
       <div>
