@@ -219,6 +219,7 @@ export type ClubEvent = {
   title: Bi;
   info: Bi;
   status: "upcoming" | "past";
+  coverImage?: string;
   gallery?: string[];
   videoUrl?: string;
   mapQuery?: string; // local do evento para o Google Maps

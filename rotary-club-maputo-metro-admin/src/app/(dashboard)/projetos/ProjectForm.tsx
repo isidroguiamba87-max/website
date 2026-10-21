@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ProjectCategory, AdminProject, GalleryItem } from "@/lib/types";
 import EntityGallery from "@/components/EntityGallery";
+import CoverImageField from "@/components/CoverImageField";
 
 const MAX_GALLERY_PHOTOS = 10;
 
@@ -137,16 +138,13 @@ export default function ProjectForm({
         </div>
       )}
 
-      <div>
-        <label className={labelClass}>Foto de capa (caminho ou URL)</label>
-        <input
-          name="image"
-          defaultValue={project?.image}
-          required
-          className={inputClass}
-          placeholder="/images/gallery/photo-01.jpg"
-        />
-      </div>
+      <CoverImageField
+        name="image"
+        defaultValue={project?.image}
+        folder="projects"
+        required
+        placeholder="/images/gallery/photo-01.jpg"
+      />
 
       <div>
         <label className={labelClass}>

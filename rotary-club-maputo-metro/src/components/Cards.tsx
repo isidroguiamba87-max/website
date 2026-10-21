@@ -8,6 +8,7 @@ import { useLang, Bi } from "@/lib/i18n";
 import { getYouTubeEmbedUrl } from "@/lib/youtube";
 import { EASE } from "@/components/Motion";
 import StackSlider from "@/components/gallery/StackSlider";
+import { isExternalImage } from "@/lib/images";
 import type { Project, ClubEvent, GalleryItem } from "@/lib/data";
 
 /* ---------- Cartão de projeto ---------- */
@@ -26,6 +27,7 @@ export function ProjectCard({ project }: { project: Project }) {
           src={project.image}
           alt={t(project.title)}
           fill
+          unoptimized={isExternalImage(project.image)}
           sizes="(max-width: 900px) 50vw, 25vw"
         />
       </div>
@@ -54,7 +56,8 @@ export function EventRow({
   const { t } = useLang();
   const [showGallery, setShowGallery] = useState(false);
   const reduced = useReducedMotion();
-  const cover = galleryItems.find((g) => g.mediaType === "image");
+  const coverUrl =
+    event.coverImage ?? galleryItems.find((g) => g.mediaType === "image")?.url;
   const youtubeEmbedUrl = event.videoUrl ? getYouTubeEmbedUrl(event.videoUrl) : null;
   const hasVideo = Boolean(event.videoUrl);
   const hasDirectVideo = hasVideo && !youtubeEmbedUrl;
@@ -73,13 +76,13 @@ export function EventRow({
       }}
     >
       <div className="event-card-media">
-        {cover ? (
+        {coverUrl ? (
           // Fotos vêm de URLs assinadas do Supabase Storage — <img> simples,
           // tal como no StackSlider, evita problemas de cache do next/image.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             className="event-card-img"
-            src={cover.url}
+            src={coverUrl}
             alt=""
             loading="lazy"
           />
@@ -231,7 +234,7 @@ export function EventRow({
                   src={encodeURI(event.videoUrl!)}
                   controls
                   preload="metadata"
-                  poster={cover?.url}
+                  poster={coverUrl}
                 />
               ) : null}
             </div>
